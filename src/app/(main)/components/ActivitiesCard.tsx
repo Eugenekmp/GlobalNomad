@@ -47,7 +47,7 @@ const ActivitiesCard = ({
           handleToggleBookmark(id);
 
           if (!bookmarked) {
-            showToast.success(`"관심 체험으로 등록했습니다."`);
+            showToast.success("관심 체험으로 등록했습니다.");
           } else {
             showToast("관심 체험을 취소했습니다.");
           }
@@ -90,6 +90,7 @@ const ActivitiesCard = ({
             <span className="text-16-bold md:text-18-bold">
               ₩ {(price ?? 0).toLocaleString()}
             </span>
+            <span className="text-16-medium text-gray-600">/ 인</span>
           </div>
         </div>
       </Link>

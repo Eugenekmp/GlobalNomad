@@ -13,7 +13,7 @@ const CATEGORIES = [
   },
   {
     id: 2,
-    name: "문화예술",
+    name: "문화 · 예술",
     icon: "🎨",
   },
   {
@@ -57,6 +57,7 @@ const ActivitiesList = ({ items, keyword }: CardListProps) => {
     setSelectedText(option);
     setIsOpen(false);
   };
+
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       const target = e.target as Node;
@@ -105,6 +106,7 @@ const ActivitiesList = ({ items, keyword }: CardListProps) => {
     }
     return 0;
   });
+
   const isSearchMode = !!keyword?.trim();
   const ITEMS_PER_PAGE = 8;
   const totalPages = Math.ceil(sortedItems.length / ITEMS_PER_PAGE);

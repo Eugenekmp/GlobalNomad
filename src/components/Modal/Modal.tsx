@@ -3,6 +3,7 @@
 import { createPortal } from "react-dom";
 import { useEffect } from "react";
 import type { ModalProps } from "./type";
+import useFocusTrap from "@/hooks/useFocusTrap";
 
 const SIZE_CLASSES = {
   sm: "min-w-80 min-h-[140px] rounded-3xl p-[30px] md:min-w-100 md:min-h-[170px] md:rounded-[30px] md:p-10",
@@ -18,6 +19,8 @@ const Modal = ({
   overlayClassName,
   children,
 }: ModalProps) => {
+  const trapRef = useFocusTrap(isOpen); //focus-trap 훅 사용
+
   useEffect(() => {
     if (!isOpen) {
       return;
@@ -56,6 +59,9 @@ const Modal = ({
       onMouseDown={onClose}
     >
       <div
+        ref={trapRef}
+        role="dialog"
+        aria-modal="true"
         className={`${SIZE_CLASSES[size]} bg-white ${className ?? ""}`}
         onMouseDown={(e) => e.stopPropagation()}
       >

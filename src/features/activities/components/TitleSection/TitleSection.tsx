@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { Map, More, StarOn } from "@/constants/icons";
 import TitleSectionProps from "./type";
@@ -8,6 +8,7 @@ import Dropdown from "@/components/Dropdown/Dropdown";
 import WarningModal from "@/components/Modal/WarningModal";
 import useDeleteMyActivityMutation from "@/features/myActivities/hooks/useDeleteActivityMutation";
 import { useUserSession } from "@/hooks/useUserSession";
+import useModal from "@/hooks/useModal";
 
 const TitleSection = ({
   id,
@@ -21,10 +22,10 @@ const TitleSection = ({
   const router = useRouter();
   const { data: session } = useUserSession();
   const isOwner = session?.userId === userId;
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const deleteModal = useModal();
 
   const deleteMutation = useDeleteMyActivityMutation(() => {
-    setIsDeleteModalOpen(false);
+    deleteModal.close();
     router.push("/mypage/activities");
   });
 
@@ -47,7 +48,7 @@ const TitleSection = ({
       {
         label: "삭제하기",
         onSelect: () => {
-          setIsDeleteModalOpen(true);
+          deleteModal.open();
         },
       },
     ],
@@ -86,8 +87,7 @@ const TitleSection = ({
         )}
       </div>
       <WarningModal
-        isOpen={isDeleteModalOpen}
-        onClose={() => setIsDeleteModalOpen(false)}
+        {...deleteModal.modalProps}
         onConfirm={handleDeleteConfirm}
         message="체험을 삭제하시겠습니까?"
       />

@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
@@ -11,6 +10,7 @@ import { showToast } from "@/lib/utils/toast";
 import Button from "@/components/Button/Button";
 import WarningModal from "@/components/Modal/WarningModal";
 import StarIcon from "@/assets/icons/star-on.svg";
+import useModal from "@/hooks/useModal";
 
 const Card = ({
   id,
@@ -21,7 +21,7 @@ const Card = ({
   bannerImageUrl,
 }: ActivitiesProps) => {
   const router = useRouter();
-  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+  const confirmModal = useModal();
 
   const deleteMutation = useDeleteMyActivityMutation(() => {
     showToast.success("체험이 삭제되었습니다.");
@@ -34,7 +34,7 @@ const Card = ({
 
     deleteMutation.mutate(id, {
       onSettled: () => {
-        setIsConfirmModalOpen(false);
+        confirmModal.close();
       },
     });
   };
@@ -87,7 +87,7 @@ const Card = ({
               className="px-2.5 py-1.5 rounded-lg text-14-medium hover:bg-red-50 hover:text-red-500"
               onClick={(e) => {
                 e.stopPropagation();
-                setIsConfirmModalOpen(true);
+                confirmModal.open();
               }}
               disabled={deleteMutation.isPending}
             >
@@ -108,8 +108,7 @@ const Card = ({
         </div>
       </div>
       <WarningModal
-        isOpen={isConfirmModalOpen}
-        onClose={() => setIsConfirmModalOpen(false)}
+        {...confirmModal.modalProps}
         onConfirm={handleDeleteConfirmButtonClick}
         message="삭제하시겠습니까?"
       />

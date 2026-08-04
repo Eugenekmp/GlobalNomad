@@ -4,7 +4,6 @@ import Button from "@/components/Button/Button";
 import StateBadge from "@/components/StateBadge/StateBadge";
 import Image from "next/image";
 import ReviewSubmitModal from "./ReviewSubmitModal";
-import { useState } from "react";
 import WarningModal from "@/components/Modal/WarningModal";
 import type { Reservation } from "@/features/reservations/types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -15,6 +14,7 @@ import {
 } from "../queries";
 import EditReservationModal from "./EditReservationModal";
 import { showToast } from "@/lib/utils/toast";
+import useModal from "@/hooks/useModal";
 
 export interface ReservedCardProps {
   reservation: Reservation;
@@ -33,9 +33,9 @@ const ReservedCard = ({ reservation }: ReservedCardProps) => {
     reviewSubmitted,
   } = reservation;
 
-  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
-  const [isWarningModalOpen, setIsWarningModalOpen] = useState(false);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const reviewModal = useModal();
+  const warningModal = useModal();
+  const editModal = useModal();
 
   const queryClient = useQueryClient();
 
@@ -50,24 +50,14 @@ const ReservedCard = ({ reservation }: ReservedCardProps) => {
     ...submitReviewMutation(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["my-reservations"] });
-      setIsReviewModalOpen(false);
+      reviewModal.close();
     },
   });
 
   const { data: activityDetail } = useQuery({
     ...activityDetailQuery(activity.id),
-    enabled: isEditModalOpen,
+    enabled: editModal.isOpen,
   });
-
-  const handleReviewModalButtonClick = () => {
-    setIsReviewModalOpen(true);
-  };
-  const handleWarningModalButtonClick = () => {
-    setIsWarningModalOpen(true);
-  };
-  const handleEditReservationButtonClick = () => {
-    setIsEditModalOpen(true);
-  };
 
   return (
     <>
@@ -97,7 +87,7 @@ const ReservedCard = ({ reservation }: ReservedCardProps) => {
                     variant="whitenGray"
                     height="h29"
                     className="px-[10px] py-[6px] !border"
-                    onClick={handleEditReservationButtonClick}
+                    onClick={() => editModal.open()}
                   >
                     예약 변경
                   </Button>
@@ -105,7 +95,7 @@ const ReservedCard = ({ reservation }: ReservedCardProps) => {
                     variant="onlyGray"
                     height="custom"
                     className="h-[29px] px-[10px] py-[6px] rounded-lg text-14-medium !text-gray-600"
-                    onClick={handleWarningModalButtonClick}
+                    onClick={() => warningModal.open()}
                   >
                     예약 취소
                   </Button>
@@ -119,7 +109,7 @@ const ReservedCard = ({ reservation }: ReservedCardProps) => {
                   onClick={
                     reviewSubmitted
                       ? () => showToast.error("이미 후기를 작성했습니다.")
-                      : handleReviewModalButtonClick
+                      : () => reviewModal.open()
                   }
                 >
                   후기 작성
@@ -142,7 +132,7 @@ const ReservedCard = ({ reservation }: ReservedCardProps) => {
               variant="whitenGray"
               height="custom"
               className="flex-1 h-[37px] rounded-lg p-[10px]"
-              onClick={handleEditReservationButtonClick}
+              onClick={() => editModal.open()}
             >
               예약 변경
             </Button>
@@ -150,7 +140,7 @@ const ReservedCard = ({ reservation }: ReservedCardProps) => {
               variant="onlyGray"
               height="custom"
               className="flex-1 h-[37px] rounded-lg p-[10px]"
-              onClick={handleWarningModalButtonClick}
+              onClick={() => warningModal.open()}
             >
               예약 취소
             </Button>
@@ -164,7 +154,7 @@ const ReservedCard = ({ reservation }: ReservedCardProps) => {
             onClick={
               reviewSubmitted
                 ? () => showToast.error("이미 후기를 작성했습니다.")
-                : handleReviewModalButtonClick
+                : () => reviewModal.open()
             }
           >
             후기 작성
@@ -172,8 +162,7 @@ const ReservedCard = ({ reservation }: ReservedCardProps) => {
         )}
       </div>
       <ReviewSubmitModal
-        isOpen={isReviewModalOpen}
-        onClose={() => setIsReviewModalOpen(false)}
+        {...reviewModal.modalProps}
         title={activity.title}
         date={date}
         startTime={startTime}
@@ -182,18 +171,16 @@ const ReservedCard = ({ reservation }: ReservedCardProps) => {
         onSubmit={(data) => submitReview(data)}
       />
       <WarningModal
-        isOpen={isWarningModalOpen}
-        onClose={() => setIsWarningModalOpen(false)}
+        {...warningModal.modalProps}
         onConfirm={() => {
           cancelReservation();
-          setIsWarningModalOpen(false);
+          warningModal.close();
         }}
         message="예약을 취소하시겠어요?"
         buttonTextRight="취소하기"
       />
       <EditReservationModal
-        isOpen={isEditModalOpen}
-        onClose={() => setIsEditModalOpen(false)}
+        {...editModal.modalProps}
         reservationId={id}
         activityDetail={activityDetail}
       />

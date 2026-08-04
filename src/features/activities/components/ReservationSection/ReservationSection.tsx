@@ -7,13 +7,14 @@ import { createActivityReservation } from "@/features/activities/api/client-api"
 import type { ActivityDetailResponse } from "@/features/activities/type";
 import { showToast } from "@/lib/utils/toast";
 import { getApiErrorMessage } from "@/lib/utils/getApiErrorMessage";
+import useModal from "@/hooks/useModal";
 
 type ReservationSectionProps = Pick<ActivityDetailResponse, "price"> & {
   activityId: number;
 };
 
 const ReservationSection = ({ activityId, price }: ReservationSectionProps) => {
-  const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
+  const successModal = useModal();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleReserve = async ({
@@ -30,7 +31,7 @@ const ReservationSection = ({ activityId, price }: ReservationSectionProps) => {
     setIsSubmitting(true);
     try {
       await createActivityReservation({ activityId, scheduleId, headCount });
-      setIsSuccessModalOpen(true);
+      successModal.open();
     } catch (error) {
       showToast.error(getApiErrorMessage(error, "예약에 실패했습니다."));
     } finally {
@@ -46,8 +47,7 @@ const ReservationSection = ({ activityId, price }: ReservationSectionProps) => {
         onReserve={handleReserve}
       />
       <SuccessModal
-        isOpen={isSuccessModalOpen}
-        onClose={() => setIsSuccessModalOpen(false)}
+        {...successModal.modalProps}
         message="예약이 완료되었습니다."
       />
     </>

@@ -1,7 +1,6 @@
 import Button from "../Button/Button";
 import Modal from "./Modal";
 import type { SuccessModalProps } from "./type";
-import Image from "next/image";
 
 const SuccessIconModal = ({
   isOpen,
@@ -16,24 +15,19 @@ const SuccessIconModal = ({
       onClose={onClose}
     >
       <div className="flex flex-col justify-center items-center">
-        <Image
-          src="/successIcon.svg"
-          alt="성공 아이콘"
-          width={88}
-          height={88}
-          className="w-[49px] h-[49px] md:w-22 md:h-22"
-        />
-        <p className="text-center text-16-bold md:text-18-bold">{message}</p>
+        <Modal.Icon src="/successIcon.svg" alt="성공 아이콘" />
+        <Modal.Message>{message}</Modal.Message>
       </div>
-
-      <Button
-        variant="mainBlue"
-        height="custom"
-        className="w-45 h-10 px-5 py-1 md:px-10 md:py-3 text-[14px] rounded-xl md:w-50 md:h-[47px] md:py-[14px]"
-        onClick={onClose}
-      >
-        {buttonText}
-      </Button>
+      <Modal.Action>
+        <Button
+          variant="mainBlue"
+          height="custom"
+          className="w-45 h-10 px-5 py-1 md:px-10 md:py-3 text-[14px] rounded-xl md:w-50 md:h-[47px] md:py-[14px]"
+          onClick={onClose}
+        >
+          {buttonText}
+        </Button>
+      </Modal.Action>
     </Modal>
   );
 };

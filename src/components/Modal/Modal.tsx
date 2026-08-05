@@ -4,6 +4,9 @@ import { createPortal } from "react-dom";
 import { useEffect } from "react";
 import type { ModalProps } from "./type";
 import useFocusTrap from "@/hooks/useFocusTrap";
+import ModalIcon from "./ModalIcon";
+import ModalAction from "./ModalAction";
+import ModalMessage from "./ModalMessage";
 
 const SIZE_CLASSES = {
   sm: "min-w-80 min-h-[140px] rounded-3xl p-[30px] md:min-w-100 md:min-h-[170px] md:rounded-[30px] md:p-10",
@@ -72,4 +75,8 @@ const Modal = ({
   );
 };
 
-export default Modal;
+export default Object.assign(Modal, {
+  Icon: ModalIcon,
+  Message: ModalMessage,
+  Action: ModalAction,
+});

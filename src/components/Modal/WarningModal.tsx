@@ -1,7 +1,6 @@
 import Button from "../Button/Button";
 import Modal from "./Modal";
 import type { WarningModalProps } from "./type";
-import Image from "next/image";
 
 const WarningModal = ({
   isOpen,
@@ -18,19 +17,11 @@ const WarningModal = ({
       onClose={onClose}
     >
       <div className="flex flex-col justify-center items-center">
-        <Image
-          src="/warningIcon.svg"
-          alt="경고 아이콘"
-          width={88}
-          height={88}
-          className="w-[49px] h-[49px] md:w-22 md:h-22"
-        />
-        <p className="text-center text-16-bold md:text-18-bold whitespace-pre-line">
-          {message}
-        </p>
+        <Modal.Icon src="/warningIcon.svg" alt="경고 아이콘" />
+        <Modal.Message>{message}</Modal.Message>
       </div>
 
-      <div className="flex gap-2 md:gap-3 justify-center items-center">
+      <Modal.Action>
         <Button
           variant="whitenGray"
           height="custom"
@@ -47,7 +38,7 @@ const WarningModal = ({
         >
           {buttonTextRight}
         </Button>
-      </div>
+      </Modal.Action>
     </Modal>
   );
 };
